@@ -23,7 +23,7 @@ def main(argv=None):
     e = sub.add_parser("encode", help="文本 -> .wy")
     e.add_argument("src", help="输入文件，或 - 读 stdin，或直接给一行文本")
     e.add_argument("-o", "--out", help="输出 .wy（默认 stdout.bin）")
-    e.add_argument("--algo", default="lzma", choices=list(codec.ALGOS))
+    e.add_argument("--algo", default="auto", choices=list(codec.ALGOS))
     e.add_argument("--no-gbk", action="store_true", help="不做 GBK 双字节化")
     e.add_argument("--lang", help="原文语言代码（默认自动识别）")
 

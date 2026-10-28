@@ -24,8 +24,8 @@ import zlib
 
 MAGIC = b"WY1\0"
 FLAG_GBK = 1
-ALGOS = {"raw": 0, "zlib": 1, "lzma": 2}
-ALGO_NAMES = {v: k for k, v in ALGOS.items()}
+ALGOS = {"raw": 0, "zlib": 1, "lzma": 2, "auto": 3}
+ALGO_NAMES = {0: "raw", 1: "zlib", 2: "lzma"}
 
 
 def _to_bytes(text: str, use_gbk: bool) -> tuple[bytes, int]:
@@ -37,17 +37,24 @@ def _to_bytes(text: str, use_gbk: bool) -> tuple[bytes, int]:
     return text.encode("utf-8"), 0
 
 
-def encode(text: str, lang: str = "zh", algo: str = "lzma", use_gbk: bool = True) -> bytes:
+def encode(text: str, lang: str = "zh", algo: str = "auto", use_gbk: bool = True) -> bytes:
     raw, flags = _to_bytes(text, use_gbk)
-    aid = ALGOS[algo]
-    if algo == "raw":
-        payload = raw
-    elif algo == "zlib":
-        payload = zlib.compress(raw, 9)
-    elif algo == "lzma":
-        payload = lzma.compress(raw, preset=9 | lzma.PRESET_EXTREME)
+    if algo == "auto":
+        # 小文本 lzma 的头部与字典开销不划算，直接比长度取小者
+        cands = [("raw", raw), ("zlib", zlib.compress(raw, 9)),
+                 ("lzma", lzma.compress(raw, preset=9 | lzma.PRESET_EXTREME))]
+        algo, payload = min(cands, key=lambda kv: len(kv[1]))
+        aid = ALGOS[algo]
     else:
-        raise ValueError(f"unknown algo {algo!r}")
+        aid = ALGOS[algo]
+        if algo == "raw":
+            payload = raw
+        elif algo == "zlib":
+            payload = zlib.compress(raw, 9)
+        elif algo == "lzma":
+            payload = lzma.compress(raw, preset=9 | lzma.PRESET_EXTREME)
+        else:
+            raise ValueError(f"unknown algo {algo!r}")
     lang_b = lang.encode("utf-8")[:255]
     return (MAGIC + struct.pack("<BBBB", aid, flags, len(lang_b), 0)
             + lang_b + struct.pack("<I", len(raw)) + payload)

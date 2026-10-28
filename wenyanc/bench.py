@@ -28,9 +28,9 @@ def bench_one(t: Translator, name: str, text: str, wenyan: str | None = None) ->
 
     m_src = codec.measure(text)
     m_wy = codec.measure(wenyan)
-    ctrl = len(codec.encode(text, lang, algo="lzma", use_gbk=False))      # 同样算法压原文
-    wy_gbk = len(codec.encode(wenyan, lang, algo="lzma", use_gbk=True))    # 本方案
-    wy_utf8 = len(codec.encode(wenyan, lang, algo="lzma", use_gbk=False))
+    ctrl = len(codec.encode(text, lang, algo="auto", use_gbk=False))       # 同样算法压原文
+    wy_gbk = len(codec.encode(wenyan, lang, algo="auto", use_gbk=True))    # 本方案
+    wy_utf8 = len(codec.encode(wenyan, lang, algo="auto", use_gbk=False))
 
     return {
         "sample": name,
