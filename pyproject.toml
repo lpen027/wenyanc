@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wenyanc"
+version = "0.1.0"
+description = "Semantic compression: translate any major language into Classical Chinese, then compress with a standard codec."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "wenyanc contributors" }]
+keywords = ["compression", "classical-chinese", "llm", "token", "semantic"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Text Processing :: Linguistic",
+]
+
+[project.scripts]
+wenyanc = "wenyanc.cli:main"
+
+[tool.setuptools]
+packages = ["wenyanc"]
