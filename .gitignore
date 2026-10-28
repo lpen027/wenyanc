@@ -7,3 +7,6 @@ dist/
 *.wy
 bench_out.txt
 demo.wy
+
+*.wypack
+out/
