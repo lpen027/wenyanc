@@ -33,8 +33,16 @@ English / 日本語 / français / español / 中文  ──▶  文言文  ─�
 
 ## 用法
 
+先分清两条路，别一上来就装模型：
+
+- **只想验证数字** → 不用装 ollama。`bench --golden` 用的是 `samples/*.wenyan.txt` 里已经落盘的译文，纯离线，跑完直接对照上面那张表。
+- **要压自己的文本** → 需要一个本地 LLM 做翻译。默认 ollama + `qwen3:8b`（约 5 GB）。没装、或装了但没启动，`encode` 会直接抛一段 `urllib` 的 `WinError 10061 / 目标计算机积极拒绝`——错误里不出现 ollama 字样，看到这个堆栈基本就是缺后端。
+
 ```bash
 pip install -e .
+
+# 不需要模型：离线复现上表
+wenyanc bench --golden
 
 # 文本 -> .wy（默认 lzma + GBK 双字节化）
 wenyanc encode samples/en.txt -o doc.wy
